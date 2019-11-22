@@ -14,6 +14,7 @@ Because of some BoosterPack/LaunchPad pin incompatibilities, it is necessary to 
 2. Modify the [FuelTank][3] BoosterPack hardware and move SDA from pin 15 to pin 10.
 3. Remove jumper JP10 from the [FR2433][1] LaunchPad to disconnect LED1.
 4. Remove jumper JP11 from the [FR2433][1] LaunchPad to disconnect LED2.
+5. Remove resistors R11, R12, R13 from the [FuelTank][3] BoosterPack so that the CHARGE, EN, and POWER_GOOD signals don't interfere with LCD control and SPI signals.
 
 To decrease overall power consumption, disconnect the emulation section of the LaunchPad -- remove all jumpers from J101.
 
@@ -28,7 +29,8 @@ The sketch collects the following data:
          - For example, 2977 represents 2.977 volts
          - Battery voltage is read from the BQ27510 Fuel Gauge on the [FuelTank][3] BoosterPack.
      - Number of times "loop()" has run since the last reboot
-     - Current "millis()" value at the time of transmission
+     - Value of the TimeToEmpty register reported by the BQ27510 Fuel Gauge
+         - This is sent using the "Millies" field in the transmitted data structure
 
 After collecting the sensor data, the data is packaged and transmitted to a
 receiver hub which can then further process and store the data over time.

@@ -9,7 +9,8 @@
     11/04/19 - A.T. - Modified to use FR2433 LaunchPad and Sharp 96 Display
                     - Assumes Fuel Tank I BoosterPack, modified to use
                       pins 9/10 for I2C.
-    11/21/19 - A.T. - Add comment documenting pin usage, GitHub URL. 
+    11/21/19 - A.T. - Add comment documenting pin usage, GitHub URL.
+    11/21/19 - A.T. - Send "Tank Remaining Minutes" in millis field and display. 
 
 */
 /* -----------------------------------------------------------------
@@ -34,29 +35,29 @@
 */
 
 /* Pin Definitions -- Stacking Fuel Tank I, CC110L, and SHARP96
- *        FR2433  Fuel Tank CC110L SHARP96  Comment
- *      --------- --------- ------ -------  -------
- *   1      3V3       3V3     3V3           Power -- Note that SHARP96 uses I/O pin for power instead of VCC
- *   2     LED1              GDO2   LCDPWR  CC110L Energia library does not use GDO2 and configures it as high impedance. Disconnect LED1 jumper (J10) on FR2433 LaunchPad
- *   3      RXD
- *   4      TXD
- *   5                              LCD_EN
- *   6
- *   7      SCK                     SCK
- *   8
- *   9      SCL       SCL                   Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
- *  10      SDA       SDA                   Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
- *  11
- *  12
- *  13
- *  14     MISO
- *  15     MOSI                      MOSI
- *  16    RESET
- *  17
- *  18
- *  19     LED2               CS            Disconnect LED2 jumper (J11) on FR2433 LaunchPad
- *  20      GND       GND    GND      GND
- */
+          FR2433  Fuel Tank CC110L SHARP96  Comment
+        --------- --------- ------ -------  -------
+     1      3V3       3V3     3V3           Power -- Note that SHARP96 uses I/O pin for power instead of VCC
+     2     LED1              GDO2   LCDPWR  CC110L Energia library does not use GDO2 and configures it as high impedance. Disconnect LED1 jumper (J10) on FR2433 LaunchPad
+     3      RXD
+     4      TXD
+     5                              LCD_EN
+     6
+     7      SCK                     SCK
+     8
+     9      SCL       SCL                   Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
+    10      SDA       SDA                   Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
+    11
+    12
+    13
+    14     MISO
+    15     MOSI                      MOSI
+    16    RESET
+    17
+    18
+    19     LED2               CS            Disconnect LED2 jumper (J11) on FR2433 LaunchPad
+    20      GND       GND    GND      GND
+*/
 
 // If using the Fuel Tank BoosterPack (Version 1, not Version 2),
 // then uncomment the following line which will then send
@@ -178,18 +179,20 @@ void loop() {
   loopCount++;
 
   myTemp.read();
-//  myVcc.read();
+  //  myVcc.read();
 
   txPacket.sensordata.MSP_T = myTemp.getTempCalibratedF();
 #ifdef FUEL_TANK_ENABLED
   myFuelTank.read2bFromRegister(BQ27510_Voltage, &data16);
   txPacket.sensordata.Batt_mV = data16;
+  myFuelTank.read2bFromRegister(BQ27510_TimeToEmpty, &data16);
+  txPacket.sensordata.Millis = data16;
 #else
   txPacket.sensordata.Batt_mV = myVcc.getVccCalibrated();
+  txPacket.sensordata.Millis = millis();
 #endif
 
   txPacket.sensordata.Loops = loopCount;
-  txPacket.sensordata.Millis = millis();
 
   // Send the data over-the-air
 #ifdef RADIO_ENABLED
@@ -204,11 +207,13 @@ void loop() {
   myScreen.text(1, 10, text);
   snprintf(text, MAXTEXTSIZE, "Vcc (mV): %d", txPacket.sensordata.Batt_mV);
   myScreen.text(1, 19, text);
+  snprintf(text, MAXTEXTSIZE, "Min Rmn:  %d", txPacket.sensordata.Millis);
+  myScreen.text(1, 28, text); 
   myScreen.setFont(1);
   snprintf(text, MAXTEXTSIZE, "Temp");
-  myScreen.text(24, 35, text);
+  myScreen.text(24, 44, text);
   snprintf(text, MAXTEXTSIZE, "%d", (txPacket.sensordata.MSP_T + 5) / 10);
-  myScreen.text(36, 55, text);
+  myScreen.text(36, 64, text);
   myScreen.setFont(0);
   snprintf(text, MAXTEXTSIZE, "%5u", loopCount);
   myScreen.text(64, 85, text);
