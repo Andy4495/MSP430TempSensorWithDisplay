@@ -10,7 +10,12 @@
                     - Assumes Fuel Tank I BoosterPack, modified to use
                       pins 9/10 for I2C.
     11/21/19 - A.T. - Add comment documenting pin usage, GitHub URL.
-    11/21/19 - A.T. - Send "Tank Remaining Minutes" in millis field and display. 
+    11/21/19 - A.T. - Send "Tank Remaining Minutes" in millis field and display.
+    11/23/19 - A.T. - Change sleep() to delay()
+                      -- sleep() does not work correctly on FR2433 board
+                      -- per EnergyTrace, does not reduce power
+                      -- seems to get stuck in a ~16 second delay, regardless of value
+                      -- There may be a conflict with the 1 ms timer used to refresh the SHARP96
 
 */
 /* -----------------------------------------------------------------
@@ -60,24 +65,19 @@
 */
 
 // If using the Fuel Tank BoosterPack (Version 1, not Version 2),
-// then uncomment the following line which will then send
+// then uncomment the following 3 lines which will then send
 // voltage levels from the Fuel Tank and not directly from Vcc.
 // Fuel tank shuts down at ~3.65 LiPo voltage
 #define FUEL_TANK_ENABLED
+#define SWI2C_ENABLED
+#include "SWI2C.h"
 
 // Comment out following line if testing without CC110L BoosterPack
 #define RADIO_ENABLED
 
-#define SWI2C_ENABLED
-
 #include <SPI.h>
 #include <AIR430BoostFCC.h>
 #include "MspTandV.h"
-#ifdef LCD_ENABLED
-#include "LCD_Launchpad.h"
-#endif
-
-#include "SWI2C.h"
 
 #include "OneMsTaskTimer.h"
 #include "LCD_SharpBoosterPack_SPI.h"
@@ -132,7 +132,6 @@ struct sPacket
 struct sPacket txPacket;
 
 MspTemp myTemp;
-// MspVcc  myVcc; // Not needed since we are using Fuel Tank voltage
 
 #ifdef SWI2C_ENABLED
 #define SDA_PIN 10
@@ -150,15 +149,13 @@ uint8_t   data8;
 char text[MAXTEXTSIZE];      // buffer to store text to print
 
 unsigned int loopCount = 0;
-const unsigned long sleepTime = 61155UL;
-
-
-long           msp430T;
-unsigned long  msp430mV;
+const unsigned long sleepTime = 61;  // In seconds
 
 void setup() {
 
+#ifdef FUEL_TANK_ENABLED
   myFuelTank.begin();
+#endif
 
   myScreen.begin();
   myScreen.clearBuffer();
@@ -178,8 +175,7 @@ void loop() {
 
   loopCount++;
 
-  myTemp.read();
-  //  myVcc.read();
+  myTemp.read(CAL_ONLY);
 
   txPacket.sensordata.MSP_T = myTemp.getTempCalibratedF();
 #ifdef FUEL_TANK_ENABLED
@@ -208,7 +204,7 @@ void loop() {
   snprintf(text, MAXTEXTSIZE, "Vcc (mV): %d", txPacket.sensordata.Batt_mV);
   myScreen.text(1, 19, text);
   snprintf(text, MAXTEXTSIZE, "Min Rmn:  %d", txPacket.sensordata.Millis);
-  myScreen.text(1, 28, text); 
+  myScreen.text(1, 28, text);
   myScreen.setFont(1);
   snprintf(text, MAXTEXTSIZE, "Temp");
   myScreen.text(24, 44, text);
@@ -219,5 +215,7 @@ void loop() {
   myScreen.text(64, 85, text);
   myScreen.flush();
 
-  sleep(sleepTime);
+  delay(sleepTime * 1000UL); // sleep() and sleepSeconds() do not appear to work correctly on FR2433
+  ///  sleepSeconds(sleepTime);
+
 }
