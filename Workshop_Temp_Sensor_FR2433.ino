@@ -1,4 +1,3 @@
-
 /* -----------------------------------------------------------------
     MSP430 Remote Temp Sensor with LCD Display
     https://github.com/Andy4495/MSP430TempSensorWithDisplay
@@ -16,6 +15,12 @@
                       -- per EnergyTrace, does not reduce power
                       -- seems to get stuck in a ~16 second delay, regardless of value
                       -- There may be a conflict with the 1 ms timer used to refresh the SHARP96
+    11/26/19 - A.T. - Use updated SHARP96 library (version 1.7 from Energia GitHub, slightly modified)
+                      Call .end() method before sleeping. This seems to work around the conflict with the
+                      ms timer used for refresh from interfering with sleep timing.
+                      - Drastically cuts down on power usage without impacting display readability.
+                      Added a couple #ifdefs so that sketch works with or without FuelTank
+                      Cleaned up some comments
 
 */
 /* -----------------------------------------------------------------
@@ -47,7 +52,7 @@
      3      RXD
      4      TXD
      5                              LCD_EN
-     6
+     6                              LCD_CS
      7      SCK                     SCK
      8
      9      SCL       SCL                   Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
@@ -65,12 +70,15 @@
 */
 
 // If using the Fuel Tank BoosterPack (Version 1, not Version 2),
-// then uncomment the following 3 lines which will then send
+// then uncomment the following line which will then send
 // voltage levels from the Fuel Tank and not directly from Vcc.
 // Fuel tank shuts down at ~3.65 LiPo voltage
 #define FUEL_TANK_ENABLED
+
+#ifdef FUEL_TANK_ENABLED
 #define SWI2C_ENABLED
 #include "SWI2C.h"
+#endif
 
 // Comment out following line if testing without CC110L BoosterPack
 #define RADIO_ENABLED
@@ -81,20 +89,25 @@
 
 #include "OneMsTaskTimer.h"
 #include "LCD_SharpBoosterPack_SPI.h"
-LCD_SharpBoosterPack_SPI myScreen;
+static const uint8_t SHARP_CS   = 6;
+static const uint8_t SHARP_DISP = 5;
+static const uint8_t SHARP_VCC  = 2;
+//LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_t pinDISP, uint8_t pinVCC, bool autoVCOM, uint8_t model)
+LCD_SharpBoosterPack_SPI myScreen(SHARP_CS, SHARP_DISP, SHARP_VCC, false, SHARP_96);
+
 int orientation = 1;
 
 // Fuel Tank Register Addresses
-#define BQ27510_Control                     0x00
-#define BQ27510_Temperature                 0x06
-#define BQ27510_Voltage                     0x08
-#define BQ27510_Flags                       0x0a
-#define BQ27510_NominalAvailableCapacity    0x0c
-#define BQ27510_FullAvailableCapacity       0x0e
-#define BQ27510_RemainingCapacity           0x10
-#define BQ27510_FullChargeCapacity          0x12
-#define BQ27510_AverageCurrent              0x14
-#define BQ27510_TimeToEmpty                 0x16
+#define BQ27510_Control                        0x00
+#define BQ27510_Temperature                    0x06
+#define BQ27510_Voltage                        0x08
+#define BQ27510_Flags                          0x0a
+#define BQ27510_NominalAvailableCapacity       0x0c
+#define BQ27510_FullAvailableCapacity          0x0e
+#define BQ27510_RemainingCapacity              0x10
+#define BQ27510_FullChargeCapacity             0x12
+#define BQ27510_AverageCurrent                 0x14
+#define BQ27510_TimeToEmpty                    0x16
 #define BQ27510_G3_StandbyCurrent              0x18
 #define BQ27510_G3_StandbyTimeToEmpty          0x1a
 #define BQ27510_G3_StateOfHealth               0x1c
@@ -132,6 +145,9 @@ struct sPacket
 struct sPacket txPacket;
 
 MspTemp myTemp;
+#ifndef FUEL_TANK_ENABLED
+MspVcc myVcc;
+#endif
 
 #ifdef SWI2C_ENABLED
 #define SDA_PIN 10
@@ -149,7 +165,7 @@ uint8_t   data8;
 char text[MAXTEXTSIZE];      // buffer to store text to print
 
 unsigned int loopCount = 0;
-const unsigned long sleepTime = 61;  // In seconds
+const unsigned long sleepTime = 240;  // In seconds. FR2433 seems to be off by factor of 4 (so 240 => 60 seconds)
 
 void setup() {
 
@@ -203,7 +219,7 @@ void loop() {
   myScreen.text(1, 10, text);
   snprintf(text, MAXTEXTSIZE, "Vcc (mV): %d", txPacket.sensordata.Batt_mV);
   myScreen.text(1, 19, text);
-  snprintf(text, MAXTEXTSIZE, "Min Rmn:  %d", txPacket.sensordata.Millis);
+  snprintf(text, MAXTEXTSIZE, "Min Rmn:  %lu", txPacket.sensordata.Millis);
   myScreen.text(1, 28, text);
   myScreen.setFont(1);
   snprintf(text, MAXTEXTSIZE, "Temp");
@@ -215,7 +231,6 @@ void loop() {
   myScreen.text(64, 85, text);
   myScreen.flush();
 
-  delay(sleepTime * 1000UL); // sleep() and sleepSeconds() do not appear to work correctly on FR2433
-  ///  sleepSeconds(sleepTime);
+  sleepSeconds(sleepTime);
 
 }
