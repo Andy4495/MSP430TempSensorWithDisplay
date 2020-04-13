@@ -55,6 +55,14 @@ The sketch collects the following data:
 After collecting the sensor data, the data is packaged and transmitted to a
 receiver hub which can then further process and store the data over time.
 
+The calibration data programmed into both of my FR2433 chips improves the temperature readings, but still produces readings that are off by several degrees. I have added a #define to allow further refinement of the calibrated temperature readings:
+
+    #define TEMP_CALIBRATION_OFFSET 0
+
+This offset is added to the calibrated reading. Since the temperature values are represented as tenth degrees, the offset value also needs to be in tenth degrees. For example, if you want to increase the temperature reading by 2 degrees, then set the `TEMP_CALIBRATION_OFFSET` value to 20.
+
+When using this program, start with `TEMP_CALIBRATION_OFFSET` set to zero, and compare the readings with a known good thermometer. Then update the value as needed for the specific board/chip that you are using (if necessary).
+
 There is a conflict with the library's use of the OneMsTaskTimer and sleep(), such that sleep() does not work properly. Although the LCD [datasheet][11] discusses the procedure to refresh the display at a minimum of once per second, it turns out that the refresh is not necessary. Therefore, the sketch disables the automatic screen refresh function (by setting the autoVCOM parameter in the constructor to false). This allows the microcontroller to sleep most of the time, drastically reducing power requirements. Per EnergyTrace measurements, the module pulls a mean current draw of 0.027 mA.
 
 ## LaunchPad and BoosterPack Pin usage

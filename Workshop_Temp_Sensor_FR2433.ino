@@ -21,6 +21,11 @@
                       - Drastically cuts down on power usage without impacting display readability.
                       Added a couple #ifdefs so that sketch works with or without FuelTank
                       Cleaned up some comments
+    04/13/20 - A.T. - Add a TEMP_CALIBRATION_OFFSET #define to adjust the calibrated temperature.
+                      Both of my FR2433 boards have factory-programmed temperature calibration 
+                      values that cause the calibrated temp readings to be off by several degrees 
+                      (uncalibrated readings are even farther off). 
+                      
 
 */
 /* -----------------------------------------------------------------
@@ -74,6 +79,13 @@
 // voltage levels from the Fuel Tank and not directly from Vcc.
 // Fuel tank shuts down at ~3.65 LiPo voltage
 #define FUEL_TANK_ENABLED
+
+// Use this value to adjust the temperature reading as needed. 
+// Start with zero and check the displayed temperature against a known good thermometer
+// This value will be added to the calibrated temperature.
+// Note that it is in tenth degrees, so to increase the calibrated temp reading by 2
+// degrees, then set the offset to 20. 
+#define TEMP_CALIBRATION_OFFSET 90
 
 #ifdef FUEL_TANK_ENABLED
 #define SWI2C_ENABLED
@@ -193,7 +205,7 @@ void loop() {
 
   myTemp.read(CAL_ONLY);
 
-  txPacket.sensordata.MSP_T = myTemp.getTempCalibratedF();
+  txPacket.sensordata.MSP_T = myTemp.getTempCalibratedF() + TEMP_CALIBRATION_OFFSET;
 #ifdef FUEL_TANK_ENABLED
   myFuelTank.read2bFromRegister(BQ27510_Voltage, &data16);
   txPacket.sensordata.Batt_mV = data16;
