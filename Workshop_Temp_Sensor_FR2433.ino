@@ -25,6 +25,8 @@
                       Both of my FR2433 boards have factory-programmed temperature calibration 
                       values that cause the calibrated temp readings to be off by several degrees 
                       (uncalibrated readings are even farther off). 
+    04/27/30 - A.T. - Use StandbyTimeToEmpty instead of TimeToEmpty (although the Fuel Gauge seems to 
+                      report an inaccurate value for standby time, too).
                       
 
 */
@@ -85,7 +87,7 @@
 // This value will be added to the calibrated temperature.
 // Note that it is in tenth degrees, so to increase the calibrated temp reading by 2
 // degrees, then set the offset to 20. 
-#define TEMP_CALIBRATION_OFFSET 90
+#define TEMP_CALIBRATION_OFFSET 70
 
 #ifdef FUEL_TANK_ENABLED
 #define SWI2C_ENABLED
@@ -177,7 +179,7 @@ uint8_t   data8;
 char text[MAXTEXTSIZE];      // buffer to store text to print
 
 unsigned int loopCount = 0;
-const unsigned long sleepTime = 240;  // In seconds. FR2433 seems to be off by factor of 4 (so 240 => 60 seconds)
+const unsigned long sleepTime = 240;  // In seconds. 
 
 void setup() {
 
@@ -209,7 +211,7 @@ void loop() {
 #ifdef FUEL_TANK_ENABLED
   myFuelTank.read2bFromRegister(BQ27510_Voltage, &data16);
   txPacket.sensordata.Batt_mV = data16;
-  myFuelTank.read2bFromRegister(BQ27510_TimeToEmpty, &data16);
+  myFuelTank.read2bFromRegister(BQ27510_G3_StandbyTimeToEmpty, &data16);
   txPacket.sensordata.Millis = data16;
 #else
   txPacket.sensordata.Batt_mV = myVcc.getVccCalibrated();
