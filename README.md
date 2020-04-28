@@ -67,28 +67,28 @@ There is a conflict with the library's use of the OneMsTaskTimer and sleep(), su
 
 ## LaunchPad and BoosterPack Pin usage
 ```
-Pin    FR2433  Fuel Tank CC110L SHARP96  Comment
----  --------- --------- ------ -------  -------
- 1      3V3       3V3     3V3            Power -- Note that SHARP96 uses I/O pin for power instead of VCC
- 2     LED1              GDO2   LCDPWR   CC110L Energia library does not use GDO2 and configures it as high impedance. Disconnect LED1 jumper (J10) on FR2433 LaunchPad
- 3      RXD
- 4      TXD
- 5                              LCD_EN
- 6                              LCD_CS
- 7      SCK                     SCK
+     FR2433  Fuel Tank CC110L SHARP96  Comment
+   --------- --------- ------ -------  -------
+ 1     3V3      3V3      3V3           Power -- Note that SHARP96 uses I/O pin for power instead of VCC
+ 2    LED1              GDO2   LCDPWR  CC110L Energia library does not use GDO2 and configures it as high impedance. Disconnect LED1 jumper (J10) on FR2433 LaunchPad
+ 3     RXD
+ 4     TXD
+ 5                             LCD_EN
+ 6                             LCD_CS
+ 7     SCK               SCK      SCK
  8
- 9      SCL       SCL                    Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
-10      SDA       SDA                    Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
+ 9     SCL      SCL                    Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
+10     SDA      SDA                    Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
 11
 12
 13
-14     MISO
-15     MOSI                      MOSI
-16    RESET
+14    MISO              MISO
+15    MOSI              MOSI     MOSI
+16   RESET
 17
-18
-19     LED2               CS             Disconnect LED2 jumper (J11) on FR2433 LaunchPad
-20      GND       GND    GND      GND
+18                        CS
+19    LED2              GDO0           Disconnect LED2 jumper (J11) on FR2433 LaunchPad
+20     GND      GND      GND      GND
 ```
 
 ## External Libraries ##

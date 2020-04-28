@@ -22,12 +22,12 @@
                       Added a couple #ifdefs so that sketch works with or without FuelTank
                       Cleaned up some comments
     04/13/20 - A.T. - Add a TEMP_CALIBRATION_OFFSET #define to adjust the calibrated temperature.
-                      Both of my FR2433 boards have factory-programmed temperature calibration 
-                      values that cause the calibrated temp readings to be off by several degrees 
-                      (uncalibrated readings are even farther off). 
-    04/27/30 - A.T. - Use StandbyTimeToEmpty instead of TimeToEmpty (although the Fuel Gauge seems to 
+                      Both of my FR2433 boards have factory-programmed temperature calibration
+                      values that cause the calibrated temp readings to be off by several degrees
+                      (uncalibrated readings are even farther off).
+    04/27/30 - A.T. - Use StandbyTimeToEmpty instead of TimeToEmpty (although the Fuel Gauge seems to
                       report an inaccurate value for standby time, too).
-                      
+
 
 */
 /* -----------------------------------------------------------------
@@ -60,20 +60,20 @@
      4      TXD
      5                              LCD_EN
      6                              LCD_CS
-     7      SCK                     SCK
+     7      SCK               SCK      SCK
      8
      9      SCL       SCL                   Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
     10      SDA       SDA                   Software I2C. Fuel Tank hardware modified to move I2C to pins 9/10 instead of 14/15
     11
     12
     13
-    14     MISO
-    15     MOSI                      MOSI
+    14     MISO              MISO
+    15     MOSI              MOSI     MOSI
     16    RESET
     17
-    18
-    19     LED2               CS            Disconnect LED2 jumper (J11) on FR2433 LaunchPad
-    20      GND       GND    GND      GND
+    18                         CS
+    19     LED2              GDO0           Disconnect LED2 jumper (J11) on FR2433 LaunchPad
+    20      GND       GND     GND      GND
 */
 
 // If using the Fuel Tank BoosterPack (Version 1, not Version 2),
@@ -82,11 +82,11 @@
 // Fuel tank shuts down at ~3.65 LiPo voltage
 #define FUEL_TANK_ENABLED
 
-// Use this value to adjust the temperature reading as needed. 
+// Use this value to adjust the temperature reading as needed.
 // Start with zero and check the displayed temperature against a known good thermometer
 // This value will be added to the calibrated temperature.
 // Note that it is in tenth degrees, so to increase the calibrated temp reading by 2
-// degrees, then set the offset to 20. 
+// degrees, then set the offset to 20.
 #define TEMP_CALIBRATION_OFFSET 70
 
 #ifdef FUEL_TANK_ENABLED
@@ -179,7 +179,7 @@ uint8_t   data8;
 char text[MAXTEXTSIZE];      // buffer to store text to print
 
 unsigned int loopCount = 0;
-const unsigned long sleepTime = 240;  // In seconds. 
+const unsigned long sleepTime = 240;  // In seconds.
 
 void setup() {
 
