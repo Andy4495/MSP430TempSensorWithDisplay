@@ -3,7 +3,7 @@ MSP430 Temperature Sensor with Display and Fuel Tank BoosterPack Support
 
 Wireless temperature sensor which uses an [MSP-EXP430FR2433][1] LauchPad, [430BOOST-CC110L][2] wireless transceiver, [BOOSTXL-BATTPACK][3] LiPo power source, and [430BOOST-SHARP96][4] low-power display.
 
-In addition to displaying the temperature and other settings, a [Wireless Sensor Receiver Hub][5] can be used to process and store the data.
+In addition to using the SHARP96 LCD to display the temperature and other settings, a [Wireless Sensor Receiver Hub][5] can be used to process and store the data.
 
 In order to save program space, this sketch uses [software I2C][7] to get data from the [BQ27510 Fuel Gauge][12] on the Fuel Tank [BoosterPack][3] instead of the [Fuel Tank Library][13]. The BQ27510 has a simple I2C interface which makes it easy to implement directly without the use of a specialized library.
 
