@@ -3,9 +3,9 @@ MSP430 Temperature Sensor with Display and Fuel Tank BoosterPack Support
 
 Wireless temperature sensor which uses an [MSP-EXP430FR2433][1] LauchPad, [430BOOST-CC110L][2] wireless transceiver, [BOOSTXL-BATTPACK][3] LiPo power source, and [430BOOST-SHARP96][4] low-power display.
 
-Since it is a wireless sensor, it depends on a receiver hub to process and
-store the data. See [Wireless Sensor Receiver Hub][5]
-for an implementation of a receiver hub.
+In addition to displaying the temperature and other settings, a [Wireless Sensor Receiver Hub][5] can be used to process and store the data.
+
+In order to save program space, this sketch uses [software I2C][7] to get data from the [BQ27510 Fuel Gauge][12] on the Fuel Tank [BoosterPack][3] instead of the [Fuel Tank Library][13]. The BQ27510 has a simple I2C interface which makes it easy to implement directly without the use of a specialized library.
 
 ## Hardware Modifications ##
 
@@ -119,3 +119,5 @@ There is a conflict with the library's use of the OneMsTaskTimer and sleep(), su
 [9]: http://www.ti.com/tool/BOOSTXL-SHARP128
 [10]: https://github.com/energia/Energia/tree/master/libraries/LCD_SharpBoosterPack_SPI
 [11]: https://www.mouser.com/datasheet/2/365/LS013B4DN04(3V_FPC)-1202885.pdf
+[12]: https://www.ti.com/product/BQ27510
+[13]: https://forum.43oh.com/topic/4915-energia-library-fuel-tank-boosterpack/
