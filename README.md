@@ -5,18 +5,30 @@ Wireless temperature sensor which uses an [MSP-EXP430FR2433][1] LauchPad, [430BO
 
 In addition to using the SHARP96 LCD to display the temperature and other settings, a [Wireless Sensor Receiver Hub][5] can be used to process and store the data.
 
-In order to save program space, this sketch uses [software I2C][7] to get data from the [BQ27510 Fuel Gauge][12] on the Fuel Tank [BoosterPack][3] instead of the [Fuel Tank Library][13]. The BQ27510 has a simple I2C interface which makes it easy to implement directly without the use of a specialized library.
-
 ## Hardware Modifications ##
 
-Because of some BoosterPack/LaunchPad pin incompatibilities, it is necessary to do the following with this design:
-1. Modify the [FuelTank][3] BoosterPack hardware and move SCL from pin 14 to pin 9.
-2. Modify the [FuelTank][3] BoosterPack hardware and move SDA from pin 15 to pin 10.
-3. Remove jumper JP10 from the [FR2433][1] LaunchPad to disconnect LED1.
-4. Remove jumper JP11 from the [FR2433][1] LaunchPad to disconnect LED2.
-5. Remove resistors R11, R12, R13 from the [FuelTank][3] BoosterPack so that the CHARGE, EN, and POWER_GOOD signals don't interfere with LCD control and SPI signals.
+Because of some BoosterPack/LaunchPad pin incompatibilities and to decrease power consumption, it is necessary to make the following hardware changes:
 
-To decrease overall power consumption, disconnect the emulation section of the LaunchPad -- remove all jumpers from J101.
+- [FR2433][1] LaunchPad
+
+  1. Remove jumper J10 to disconnect LED1.
+  2. Remove jumper J11 to disconnect LED2.
+  3. Remove all jumpers from J101 to disconnect the emulation section from the target section of the LaunchPad.
+    - Note that you will need to connect the GND, SBWTDIO, and SBWTDCK jumpers to program the board.
+    - Do not supply USB power to the LaunchPad when it is plugged into the FuelTank BoosterPack unless the 5V and 3V3 jumppers are removed.
+
+
+- [FuelTank][3] BoosterPack
+
+  1. Route the I2C signals to pins 9 and 10
+     - Cut the PC traces on the front of the FuelTank that go to pins 14 and 15 (these traces start at two vias directly beneath R5).
+     - Gently remove the JP1 female header by inserting a thin flat screwdriver between the header and the PC board. Set the header aside so it can be replaced later.
+     - Solder a wire from the right pad of R6 (leaving the resistor in place) to BoosterPack pin 10, as close to the PC board as possible (this is the new SDA signal).
+     - Solder a wire from the right pad of R5 (leaving the resistor in place) to BoosterPack pin 9, as close to the PC board as possible (this is the new SCL signal).
+     - Use a small diagonal cutter or other tool to clip away excess plastic on the removed header where pins 9 and 10 are located. This is to allow some clearance to the newly soldered wires when replacing the header.
+     - Replace the JP1 female header.
+  2. Remove resistors R11, R12, R13 from the [FuelTank][3] BoosterPack so that the CHARGE, EN, and POWER_GOOD signals don't interfere with LCD control and SPI signals.
+  3. Remove 10KΩ resistors R18 and R20 and install pulldown 10KΩ or 22KΩ resistors in R17 and R19 to significantly reduce current consumption. The configuration of the [TPS6300x][16] buck/boost converters on the FuelTank causes a relatively high current drain in low-power configurations. See [this article][15] for more information.
 
 ## Library Modifications ##
 
@@ -45,17 +57,19 @@ The sketch collects the following data:
 - MSP430
      - Die temperature in degrees Fahrenheit * 10
          - For example, 733 represents 73.3 degrees F
-     - LiPo Battery voltage (Vcc) in millivolts
-         - For example, 2977 represents 2.977 volts
-         - Battery voltage is read from the BQ27510 Fuel Gauge on the [FuelTank][3] BoosterPack.
      - Number of times "loop()" has run since the last reboot
-     - Value of the TimeToEmpty register reported by the BQ27510 Fuel Gauge
-         - This is sent using the "Millies" field in the transmitted data structure
+
+
+- FuelTank BoosterPack readings from the [BQ27510 Fuel Gauge][12]
+  - LiPo Battery voltage (millivolts)
+    - For example, 2977 represents 2.977 volts
+  - StandbyTimeToEmpty value (minutes)
+    - This is sent using the `Millis` field in the transmitted data structure
 
 After collecting the sensor data, the data is packaged and transmitted to a
 receiver hub which can then further process and store the data over time.
 
-The calibration data programmed into both of my FR2433 chips improves the temperature readings, but still produces readings that are off by several degrees. I have added a #define to allow further refinement of the calibrated temperature readings:
+The calibration data programmed into both of my FR2433 chips improves the temperature readings, but still produces readings that are off by several degrees. I have added a `#define` to allow further refinement of the calibrated temperature readings:
 
     #define TEMP_CALIBRATION_OFFSET 0
 
@@ -63,7 +77,9 @@ This offset is added to the calibrated reading. Since the temperature values are
 
 When using this program, start with `TEMP_CALIBRATION_OFFSET` set to zero, and compare the readings with a known good thermometer. Then update the value as needed for the specific board/chip that you are using (if necessary).
 
-There is a conflict with the library's use of the OneMsTaskTimer and sleep(), such that sleep() does not work properly. Although the LCD [datasheet][11] discusses the procedure to refresh the display at a minimum of once per second, it turns out that the refresh is not necessary. Therefore, the sketch disables the automatic screen refresh function (by setting the autoVCOM parameter in the constructor to false). This allows the microcontroller to sleep most of the time, drastically reducing power requirements. Per EnergyTrace measurements, the module pulls a mean current draw of 0.027 mA.
+There is a conflict with the library's use of the OneMsTaskTimer and sleep(), such that sleep() does not work properly. Although the LCD [datasheet][11] discusses the procedure to refresh the display at a minimum of once per second, it turns out that the refresh is not necessary. Therefore, the sketch disables the automatic screen refresh function (by setting the autoVCOM parameter in the constructor to false). This allows the microcontroller to sleep most of the time, drastically reducing power requirements. Per [EnergyTrace][14] measurements, the module pulls a mean current draw of 0.027 mA. A fully charged FuelTank can power this setup for several months.
+
+In order to save program space, this sketch uses [software I2C][7] to get data from the [BQ27510 Fuel Gauge][12] on the Fuel Tank [BoosterPack][3] instead of the [Fuel Tank Library][13]. The BQ27510 has a simple I2C interface which makes it easy to implement directly without the use of a specialized library.
 
 ## LaunchPad and BoosterPack Pin usage
 ```
@@ -121,3 +137,6 @@ There is a conflict with the library's use of the OneMsTaskTimer and sleep(), su
 [11]: https://www.mouser.com/datasheet/2/365/LS013B4DN04(3V_FPC)-1202885.pdf
 [12]: https://www.ti.com/product/BQ27510
 [13]: https://forum.43oh.com/topic/4915-energia-library-fuel-tank-boosterpack/
+[14]: http://www.ti.com/tool/ENERGYTRACE
+[15]: https://embeddedcomputing.weebly.com/fuel-tank-boosterpack.html
+[16]: https://www.ti.com/lit/ds/symlink/tps63002.pdf
