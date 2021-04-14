@@ -123,6 +123,9 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
 * [Wireless Sensor Receiver Hub][5]
 * Version 1.0.3 of [LCD_SharpBoosterPack_SPI library][10]
 
+## License ##
+
+The software and other files in this repository are released under what is commonly called the [MIT License][100]. See the file [`LICENSE.txt`][101] in this repository.
 
 [1]: http://www.ti.com/tool/MSP-EXP430FR2433
 [2]: http://www.ti.com/tool/430BOOST-CC110L
@@ -140,3 +143,5 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
 [14]: http://www.ti.com/tool/ENERGYTRACE
 [15]: https://embeddedcomputing.weebly.com/fuel-tank-boosterpack.html
 [16]: https://www.ti.com/lit/ds/symlink/tps63002.pdf
+[100]: https://choosealicense.com/licenses/mit/
+[101]: ./LICENSE.txt
