@@ -1,11 +1,10 @@
-MSP430 Temperature Sensor with Display and Fuel Tank BoosterPack Support
-==============================
+# MSP430 Temperature Sensor with Display and Fuel Tank BoosterPack Support
 
 Wireless temperature sensor which uses an [MSP-EXP430FR2433][1] LauchPad, [430BOOST-CC110L][2] wireless transceiver, [BOOSTXL-BATTPACK][3] LiPo power source, and [430BOOST-SHARP96][4] low-power display.
 
 In addition to using the SHARP96 LCD to display the temperature and other settings, a [Wireless Sensor Receiver Hub][5] can be used to process and store the data.
 
-## Hardware Modifications ##
+## Hardware Modifications
 
 Because of some BoosterPack/LaunchPad pin incompatibilities and to decrease power consumption, it is necessary to make the following hardware changes:
 
@@ -14,9 +13,10 @@ Because of some BoosterPack/LaunchPad pin incompatibilities and to decrease powe
   1. Remove jumper J10 to disconnect LED1.
   2. Remove jumper J11 to disconnect LED2.
   3. Remove all jumpers from J101 to disconnect the emulation section from the target section of the LaunchPad.
-    - Note that you will need to connect the GND, SBWTDIO, and SBWTDCK jumpers to program the board.
-    - Do not supply USB power to the LaunchPad when it is plugged into the FuelTank BoosterPack unless the 5V and 3V3 jumppers are removed.
-
+  
+  Note that you will need to connect the GND, SBWTDIO, and SBWTDCK jumpers to program the board.
+  
+  **Do not supply USB power to the LaunchPad** when it is plugged into the FuelTank BoosterPack unless the 5V and 3V3 jumppers are removed.
 
 - [FuelTank][3] BoosterPack
 
@@ -30,35 +30,38 @@ Because of some BoosterPack/LaunchPad pin incompatibilities and to decrease powe
   2. Remove resistors R11, R12, R13 from the [FuelTank][3] BoosterPack so that the CHARGE, EN, and POWER_GOOD signals don't interfere with LCD control and SPI signals.
   3. Remove 10KΩ resistors R18 and R20 and install pulldown 10KΩ or 22KΩ resistors in R17 and R19 to significantly reduce current consumption. The configuration of the [TPS6300x][16] buck/boost converters on the FuelTank causes a relatively high current drain in low-power configurations. See [this article][15] for more information.
 
-## Library Modifications ##
+## Library Modifications
 
 This uses an updated and modified version of the `LCD_SharpBoosterPack_SPI` library, rather than version 1.0.0 included with Energia.
 
 Copy version 1.0.3 from [GitHub][10] and make the following modifications to `LCD_SharpBoosterPack_SPI.cpp`:
-+ To make the constructor definitions equivalent, update the second constructor definition (lines 106 - 108) and replace this:
-```    
-digitalWrite(RED_LED, HIGH);
-lcd_vertical_max = model;
-lcd_horizontal_max = model;
-```
-with this:
-```
-lcd_vertical_max = model;
-lcd_horizontal_max = model;
-static uint8_t * _frameBuffer;
-_frameBuffer = new uint8_t[_index(lcd_vertical_max, lcd_horizontal_max)];
-DisplayBuffer = (uint8_t *) _frameBuffer;
-```
 
-## Program details ##
+- To make the constructor definitions equivalent, update the second constructor definition (lines 106 - 108) by replacing this:
+
+    ```cpp
+    digitalWrite(RED_LED, HIGH);
+    lcd_vertical_max = model;
+    lcd_horizontal_max = model;
+    ```
+
+    with this:
+
+    ```cpp
+    lcd_vertical_max = model;
+    lcd_horizontal_max = model;
+    static uint8_t * _frameBuffer;
+    _frameBuffer = new uint8_t[_index(lcd_vertical_max, lcd_horizontal_max)];
+    DisplayBuffer = (uint8_t *) _frameBuffer;
+    ```
+
+## Program details
 
 The sketch collects the following data:
 
 - MSP430
-     - Die temperature in degrees Fahrenheit * 10
-         - For example, 733 represents 73.3 degrees F
-     - Number of times "loop()" has run since the last reboot
-
+  - Die temperature in degrees Fahrenheit * 10
+    - For example, 733 represents 73.3 degrees F
+  - Number of times "loop()" has run since the last reboot
 
 - FuelTank BoosterPack readings from the [BQ27510 Fuel Gauge][12]
   - LiPo Battery voltage (millivolts)
@@ -71,7 +74,9 @@ receiver hub which can then further process and store the data over time.
 
 The calibration data programmed into both of my FR2433 chips improves the temperature readings, but still produces readings that are off by several degrees. I have added a `#define` to allow further refinement of the calibrated temperature readings:
 
-    #define TEMP_CALIBRATION_OFFSET 0
+```cpp
+#define TEMP_CALIBRATION_OFFSET 0
+```
 
 This offset is added to the calibrated reading. Since the temperature values are represented as tenth degrees, the offset value also needs to be in tenth degrees. For example, if you want to increase the temperature reading by 2 degrees, then set the `TEMP_CALIBRATION_OFFSET` value to 20.
 
@@ -82,7 +87,8 @@ There is a conflict with the library's use of the OneMsTaskTimer and sleep(), su
 In order to save program space, this sketch uses [software I2C][7] to get data from the [BQ27510 Fuel Gauge][12] on the Fuel Tank [BoosterPack][3] instead of the [Fuel Tank Library][13]. The BQ27510 has a simple I2C interface which makes it easy to implement directly without the use of a specialized library.
 
 ## LaunchPad and BoosterPack Pin usage
-```
+
+```text
      FR2433  Fuel Tank CC110L SHARP96  Comment
    --------- --------- ------ -------  -------
  1     3V3      3V3      3V3           Power -- Note that SHARP96 uses I/O pin for power instead of VCC
@@ -107,23 +113,23 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
 20     GND      GND      GND      GND
 ```
 
-## External Libraries ##
+## External Libraries
 
-* [Calibrated Temperature and Vcc Library][6]
-* [Software I2C Library][7]
+- [Calibrated Temperature and Vcc Library][6]
+- [Software I2C Library][7]
 
-## References ##
+## References
 
-* [MSP-EXP430FR2433][1] LaunchPad
-* [CC110L][3] BoosterPack
-* [BOOSTXL-BATTPACK][3] LiPo Fuel Tank BoosterPack
-    * Note that this BoosterPack has been discontinued. This sketch is specific to this BoosterPack and will require modifications to work with the [Fuel Tank II][8] BoosterPack
-* [430BOOST-SHARP96][4] Display BoosterPack
-    * Note that this BoosterPack has been discontinued. This sketch is specific to this BoosterPack and may require modifications to work with the [SHARP128][9] BoosterPack
-* [Wireless Sensor Receiver Hub][5]
-* Version 1.0.3 of [LCD_SharpBoosterPack_SPI library][10]
+- [MSP-EXP430FR2433][1] LaunchPad
+- [CC110L][3] BoosterPack
+- [BOOSTXL-BATTPACK][3] LiPo Fuel Tank BoosterPack
+  - Note that this BoosterPack has been discontinued. This sketch is specific to this BoosterPack and will require modifications to work with the [Fuel Tank II][8] BoosterPack
+- [430BOOST-SHARP96][4] Display BoosterPack
+  - Note that this BoosterPack has been discontinued. This sketch is specific to this BoosterPack and may require modifications to work with the [SHARP128][9] BoosterPack
+- [Wireless Sensor Receiver Hub][5]
+- Version 1.0.3 of [LCD_SharpBoosterPack_SPI library][10]
 
-## License ##
+## License
 
 The software and other files in this repository are released under what is commonly called the [MIT License][100]. See the file [`LICENSE.txt`][101] in this repository.
 
@@ -145,3 +151,4 @@ The software and other files in this repository are released under what is commo
 [16]: https://www.ti.com/lit/ds/symlink/tps63002.pdf
 [100]: https://choosealicense.com/licenses/mit/
 [101]: ./LICENSE.txt
+[200]: https://github.com/Andy4495/MSP430TempSensorWithDisplay
