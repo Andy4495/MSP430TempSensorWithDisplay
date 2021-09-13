@@ -25,8 +25,9 @@
                       Both of my FR2433 boards have factory-programmed temperature calibration
                       values that cause the calibrated temp readings to be off by several degrees
                       (uncalibrated readings are even farther off).
-    04/27/30 - A.T. - Use StandbyTimeToEmpty instead of TimeToEmpty (although the Fuel Gauge seems to
+    04/27/20 - A.T. - Use StandbyTimeToEmpty instead of TimeToEmpty (although the Fuel Gauge seems to
                       report an inaccurate value for standby time, too).
+    09/12/21 - A.T. - Reverse the screen on each update to limit burn-in.
 
 
 */
@@ -171,11 +172,9 @@ MspVcc myVcc;
 
 #ifdef FUEL_TANK_ENABLED
 SWI2C myFuelTank = SWI2C(SDA_PIN, SCL_PIN, FUEL_TANK_ADDR);
-uint16_t  data16;
-uint8_t   data8;
 #endif
 
-#define MAXTEXTSIZE 17
+#define MAXTEXTSIZE 34
 char text[MAXTEXTSIZE];      // buffer to store text to print
 
 unsigned int loopCount = 0;
@@ -209,10 +208,8 @@ void loop() {
 
   txPacket.sensordata.MSP_T = myTemp.getTempCalibratedF() + TEMP_CALIBRATION_OFFSET;
 #ifdef FUEL_TANK_ENABLED
-  myFuelTank.read2bFromRegister(BQ27510_Voltage, &data16);
-  txPacket.sensordata.Batt_mV = data16;
-  myFuelTank.read2bFromRegister(BQ27510_G3_StandbyTimeToEmpty, &data16);
-  txPacket.sensordata.Millis = data16;
+  myFuelTank.read2bFromRegister(BQ27510_Voltage, (uint16_t*)&txPacket.sensordata.Batt_mV);
+  myFuelTank.read2bFromRegister(BQ27510_G3_StandbyTimeToEmpty, (uint16_t*)&txPacket.sensordata.Millis);
 #else
   txPacket.sensordata.Batt_mV = myVcc.getVccCalibrated();
   txPacket.sensordata.Millis = millis();
@@ -227,14 +224,10 @@ void loop() {
 
   myScreen.clear();
   myScreen.setFont(0);
-  snprintf(text, MAXTEXTSIZE, "Sensor:   %d", TxRadioID);
+  snprintf(text, MAXTEXTSIZE, "Sensor:   %d     Channel:  %d", TxRadioID, 1);
   myScreen.text(1, 1, text);
-  snprintf(text, MAXTEXTSIZE, "Channel:  %d", 1);
-  myScreen.text(1, 10, text);
-  snprintf(text, MAXTEXTSIZE, "Vcc (mV): %d", txPacket.sensordata.Batt_mV);
+  snprintf(text, MAXTEXTSIZE, "Vcc (mV): %d  Min Rmn:  %lu", txPacket.sensordata.Batt_mV, txPacket.sensordata.Millis);
   myScreen.text(1, 19, text);
-  snprintf(text, MAXTEXTSIZE, "Min Rmn:  %lu", txPacket.sensordata.Millis);
-  myScreen.text(1, 28, text);
   myScreen.setFont(1);
   snprintf(text, MAXTEXTSIZE, "Temp");
   myScreen.text(24, 44, text);
@@ -243,7 +236,8 @@ void loop() {
   myScreen.setFont(0);
   snprintf(text, MAXTEXTSIZE, "%5u", loopCount);
   myScreen.text(64, 85, text);
-  myScreen.flush();
+  if (loopCount % 2) myScreen.flush();
+  else myScreen.flushReversed();
 
   sleepSeconds(sleepTime);
 

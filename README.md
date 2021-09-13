@@ -82,7 +82,9 @@ This offset is added to the calibrated reading. Since the temperature values are
 
 When using this program, start with `TEMP_CALIBRATION_OFFSET` set to zero, and compare the readings with a known good thermometer. Then update the value as needed for the specific board/chip that you are using (if necessary).
 
-There is a conflict with the library's use of the OneMsTaskTimer and sleep(), such that sleep() does not work properly. Although the LCD [datasheet][11] discusses the procedure to refresh the display at a minimum of once per second, it turns out that the refresh is not necessary. Therefore, the sketch disables the automatic screen refresh function (by setting the autoVCOM parameter in the constructor to false). This allows the microcontroller to sleep most of the time, drastically reducing power requirements. Per [EnergyTrace][14] measurements, the module pulls a mean current draw of 0.027 mA. A fully charged FuelTank can power this setup for several months.
+There is a conflict with the LCD library's use of the `OneMsTaskTimer` and `sleep()`, such that `sleep()` does not work properly. This appears to be related to the software VCOM clock generation. The VCOM clock (as described in the LCD [application note][18]) is needed to prevent DC bias buildup in the display which can cause burn-in. However, this also significantly impacts power usage of the overall sketch. Therefore, the sketch disables the automatic screen refresh function by setting the autoVCOM parameter in the constructor to false. To limit burn-in, the sketch reverses the display every time it updates.
+
+With the microcontroller sleeping most of the time, overall power consumption is very low. Per [EnergyTrace][14] measurements, the module pulls a mean current draw of 0.027 mA. A fully charged FuelTank can power this setup for several months.
 
 In order to save program space, this sketch uses [software I2C][7] to get data from the [BQ27510 Fuel Gauge][12] on the Fuel Tank [BoosterPack][3] instead of the [Fuel Tank Library][13]. The BQ27510 has a simple I2C interface which makes it easy to implement directly without the use of a specialized library.
 
@@ -128,6 +130,8 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
   - Note that this BoosterPack has been discontinued. This sketch is specific to this BoosterPack and may require modifications to work with the [SHARP128][9] BoosterPack
 - [Wireless Sensor Receiver Hub][5]
 - Version 1.0.3 of [LCD_SharpBoosterPack_SPI library][10]
+- Sharp Memory LCD [datasheet][17]
+- Sharp Memory LCD [application note][18]
 
 ## License
 
@@ -149,6 +153,8 @@ The software and other files in this repository are released under what is commo
 [14]: http://www.ti.com/tool/ENERGYTRACE
 [15]: https://embeddedcomputing.weebly.com/fuel-tank-boosterpack.html
 [16]: https://www.ti.com/lit/ds/symlink/tps63002.pdf
+[17]: https://www.mouser.com/catalog/specsheets/LS013B4DN04(3V_FPC).pdf
+[18]: https://www.sharpmemorylcd.com/resources/SharpMemoryLCDTechnologyB.pdf
 [100]: https://choosealicense.com/licenses/mit/
 [101]: ./LICENSE.txt
 [200]: https://github.com/Andy4495/MSP430TempSensorWithDisplay
