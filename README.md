@@ -124,6 +124,8 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
 - [Software I2C Library][7]
 - [OneMsTaskTimer Library][19]  
   This library is part of the Energia IDE installation. However, it is not part of the board packages, and therefore isn't included when compiling using the Arduino IDE or CLI. So I have also included a copy of the `.cpp` and `.h` files in the `extras/OneMsTaskTimer` folder in this repo.
+- [LCD_SharpBoosterPack_SPI][20]  
+  This library is part of the Energia IDE installation. However, it is not part of the board packages, and therefore isn't included when compiling using the Arduino IDE or CLI. So I have also included a copy of the `.cpp` and `.h` files in the `extras/LCD_SharpBoosterPack_SPI` folder in this repo.  
 
 ## References
 

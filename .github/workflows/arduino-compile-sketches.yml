@@ -26,3 +26,4 @@ jobs:
             - source-url: https://github.com/Andy4495/MspTandV.git
             - source-url: https://github.com/Andy4495/SWI2C.git
             - source-path: ./extras/OneMsTaskTimer
+            - source-path: ./extras/LCD_SharpBoosterPack_SPI
