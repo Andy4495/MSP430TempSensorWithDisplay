@@ -163,6 +163,7 @@ The software and other files in this repository are released under what is commo
 [17]: https://www.mouser.com/catalog/specsheets/LS013B4DN04(3V_FPC).pdf
 [18]: https://www.sharpmemorylcd.com/resources/SharpMemoryLCDTechnologyB.pdf
 [19]: https://github.com/energia/Energia/tree/master/libraries/OneMsTaskTimer
+[20]: https://github.com/energia/Energia/tree/master/libraries/LCD_SharpBoosterPack_SPI
 [100]: https://choosealicense.com/licenses/mit/
 [101]: ./LICENSE.txt
 [200]: https://github.com/Andy4495/MSP430TempSensorWithDisplay
