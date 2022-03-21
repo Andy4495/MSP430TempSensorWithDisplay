@@ -122,11 +122,13 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
 
 - [Calibrated Temperature and Vcc Library][6]
 - [Software I2C Library][7]
+- [OneMsTaskTimer Library][19]  
+  This library is part of the Energia IDE installation. However, it is not part of the board packages, and therefore isn't included when compiling using the Arduino IDE or CLI. So I have also included a copy of the `.cpp` and `.h` files in the `extras/OneMsTaskTimer` folder in this repo.
 
 ## References
 
 - [MSP-EXP430FR2433][1] LaunchPad
-- [CC110L][3] BoosterPack
+- [CC110L][2] BoosterPack
 - [BOOSTXL-BATTPACK][3] LiPo Fuel Tank BoosterPack
   - Note that this BoosterPack has been discontinued. This sketch is specific to this BoosterPack and will require modifications to work with the [Fuel Tank II][8] BoosterPack
 - [430BOOST-SHARP96][4] Display BoosterPack
@@ -141,7 +143,7 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
 The software and other files in this repository are released under what is commonly called the [MIT License][100]. See the file [`LICENSE.txt`][101] in this repository.
 
 [1]: http://www.ti.com/tool/MSP-EXP430FR2433
-[2]: http://www.ti.com/tool/430BOOST-CC110L
+[2]: https://www.ti.com/lit/ml/swru312b/swru312b.pdf
 [3]: http://www.ti.com/tool/BOOSTXL-BATTPACK
 [4]: http://www.ti.com/tool/430BOOST-SHARP96
 [5]: https://github.com/Andy4495/Wireless-Sensor-Receiver-Hub
@@ -158,6 +160,9 @@ The software and other files in this repository are released under what is commo
 [16]: https://www.ti.com/lit/ds/symlink/tps63002.pdf
 [17]: https://www.mouser.com/catalog/specsheets/LS013B4DN04(3V_FPC).pdf
 [18]: https://www.sharpmemorylcd.com/resources/SharpMemoryLCDTechnologyB.pdf
+[19]: https://github.com/energia/Energia/tree/master/libraries/OneMsTaskTimer
 [100]: https://choosealicense.com/licenses/mit/
 [101]: ./LICENSE.txt
 [200]: https://github.com/Andy4495/MSP430TempSensorWithDisplay
+
+[//]: # (Old TI product link that is no longer active: http://www.ti.com/tool/430BOOST-CC110L)
