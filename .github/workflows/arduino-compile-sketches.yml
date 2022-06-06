@@ -16,7 +16,7 @@ jobs:
           platforms: |
             - name: 'energia:msp430'
               version: latest
-              source-url: 'http://energia.nu/packages/package_energia_index.json'
+              source-url: 'https://energia.nu/packages/package_energia_index.json'
           sketch-paths: |
             - .
           verbose: true
