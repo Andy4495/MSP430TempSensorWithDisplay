@@ -149,7 +149,7 @@ The files in the `extras` folder are provided for convenience when compiling wit
 [1]: http://www.ti.com/tool/MSP-EXP430FR2433
 [2]: https://www.ti.com/lit/ml/swru312b/swru312b.pdf
 [3]: http://www.ti.com/tool/BOOSTXL-BATTPACK
-[4]: http://www.ti.com/tool/430BOOST-SHARP96
+[4]: https://www.ti.com/lit/ug/slau553/slau553.pdf
 [5]: https://github.com/Andy4495/Wireless-Sensor-Receiver-Hub
 [6]: https://github.com/Andy4495/mspTandV
 [7]: https://github.com/Andy4495/SWI2C
