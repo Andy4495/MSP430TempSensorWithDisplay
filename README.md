@@ -32,6 +32,8 @@ Because of some BoosterPack/LaunchPad pin incompatibilities and to decrease powe
      - Replace the JP1 female header.
   2. Remove resistors R11, R12, R13 from the [FuelTank][3] BoosterPack so that the CHARGE, EN, and POWER_GOOD signals don't interfere with LCD control and SPI signals.
   3. Remove 10KΩ resistors R18 and R20 and install pulldown 10KΩ or 22KΩ resistors in R17 and R19 to significantly reduce current consumption. The configuration of the [TPS6300x][16] buck/boost converters on the FuelTank causes a relatively high current drain in low-power configurations. See [this article][15] for more information.
+  4. Remove 1KΩ resistor R14 to disable the BAT LOW LED. The LED quickly drains whatever remaining power is available in the battery, often to the point that a special procedure needs to be performed to re-enable the battery for charging (see Section 6 in the Fuel Tank [User's Guide][21]).
+  5. Further power reduction (on the order of 50 uA) is possible by disabling the 5V regulator (TPS63002 chip labeled IC4). However, this is a more difficult modification, and also makes the FuelTank less useful without undoing the change (since 5V output is no longer available). To disable IC4, cut the trace going to pin 6 of IC4, and replace it with a wire soldered from pin 6 to GND.
 
 ## Library Modifications
 
@@ -166,6 +168,7 @@ The files in the `extras` folder are provided for convenience when compiling wit
 [18]: https://www.sharpmemorylcd.com/resources/SharpMemoryLCDTechnologyB.pdf
 [19]: https://github.com/energia/Energia/tree/master/libraries/OneMsTaskTimer
 [20]: https://github.com/energia/Energia/tree/master/libraries/LCD_SharpBoosterPack_SPI
+[21]: https://www.ti.com/lit/pdf/slvua32
 [100]: https://choosealicense.com/licenses/mit/
 [101]: ./LICENSE.txt
 [200]: https://github.com/Andy4495/MSP430TempSensorWithDisplay
