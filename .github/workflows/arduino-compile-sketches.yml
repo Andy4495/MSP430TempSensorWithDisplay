@@ -22,7 +22,7 @@ jobs:
           platforms: |
             - name: 'energia:msp430'
               version: latest
-              source-url: 'https://raw.githubusercontent.com/Andy4495/TI_Platform_Cores_For_Arduino/main/json/package_energia_minimal_G2_107_index.json'
+              source-url: 'https://raw.githubusercontent.com/Andy4495/TI_Platform_Cores_For_Arduino/main/json/package_energia_minimal_MSP_107_index.json'
           sketch-paths: |
             - .
           verbose: true
