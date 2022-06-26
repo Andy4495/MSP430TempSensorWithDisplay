@@ -13,9 +13,9 @@ Because of some BoosterPack/LaunchPad pin incompatibilities and to decrease powe
 
 - [FR2433][1] LaunchPad
 
-  1. Remove jumper J10 to disconnect LED1.
-  2. Remove jumper J11 to disconnect LED2.
-  3. Remove all jumpers from J101 to disconnect the emulation section from the target section of the LaunchPad.
+  - Remove jumper J10 to disconnect LED1.
+  - Remove jumper J11 to disconnect LED2.
+  - Remove all jumpers from J101 to disconnect the emulation section from the target section of the LaunchPad.
   
   Note that you will need to connect the GND, SBWTDIO, and SBWTDCK jumpers to program the board.
   
@@ -23,43 +23,25 @@ Because of some BoosterPack/LaunchPad pin incompatibilities and to decrease powe
 
 - [FuelTank][3] BoosterPack
 
-  1. Route the I2C signals to pins 9 and 10
-     - Cut the PC traces on the front of the FuelTank that go to pins 14 and 15 (these traces start at two vias directly beneath R5).
-     - Gently remove the JP1 female header by inserting a thin flat screwdriver between the header and the PC board. Set the header aside so it can be replaced later.
-     - Solder a wire from the right pad of R6 (leaving the resistor in place) to BoosterPack pin 10, as close to the PC board as possible (this is the new SDA signal).
-     - Solder a wire from the right pad of R5 (leaving the resistor in place) to BoosterPack pin 9, as close to the PC board as possible (this is the new SCL signal).
-     - Use a small diagonal cutter or other tool to clip away excess plastic on the removed header where pins 9 and 10 are located. This is to allow some clearance to the newly soldered wires when replacing the header.
-     - Replace the JP1 female header.
-  2. Remove resistors R11, R12, R13 from the [FuelTank][3] BoosterPack so that the CHARGE, EN, and POWER_GOOD signals don't interfere with LCD control and SPI signals.
-  3. Remove 10KΩ resistors R18 and R20 and install pulldown 10KΩ or 22KΩ resistors in R17 and R19 to significantly reduce current consumption. The configuration of the [TPS6300x][16] buck/boost converters on the FuelTank causes a relatively high current drain in low-power configurations. See [this article][15] for more information.
-  4. Remove 1KΩ resistor R14 to disable the BAT LOW LED. The LED quickly drains whatever remaining power is available in the battery, often to the point that a special procedure needs to be performed to re-enable the battery for charging (see Section 6 in the Fuel Tank [User's Guide][21]).
-  5. Further power reduction (on the order of 50 uA) is possible by disabling the 5V regulator (TPS63002 chip labeled IC4). However, this is a more difficult modification, and also makes the FuelTank less useful without undoing the change (since 5V output is no longer available). To disable IC4, cut the trace going to pin 6 of IC4, and replace it with a wire soldered from pin 6 to GND.
+  - Route the I2C signals to pins 9 and 10:
+    - Cut the PC traces on the front of the FuelTank that go to pins 14 and 15 (these traces start at two vias directly beneath R5).
+    - Gently remove the JP1 female header by inserting a thin flat screwdriver between the header and the PC board. Set the header aside so it can be replaced later.
+    - Solder a wire from the right pad of R6 (leaving the resistor in place) to BoosterPack pin 10, as close to the PC board as possible (this is the new SDA signal).
+    - Solder a wire from the right pad of R5 (leaving the resistor in place) to BoosterPack pin 9, as close to the PC board as possible (this is the new SCL signal).
+    - Use a small diagonal cutter or other tool to clip away excess plastic on the removed header where pins 9 and 10 are located. This is to allow some clearance to the newly soldered wires when replacing the header.
+    - Replace the JP1 female header.
+  - Remove resistors R11, R12, R13 from the [FuelTank][3] BoosterPack.
+    - This ensures that the CHARGE, EN, and POWER_GOOD signals don't interfere with LCD control and SPI signals.
+  - Remove 10KΩ resistors R18 and R20 and install pulldown 10KΩ or 22KΩ resistors in R17 and R19.
+    - This significantly reduces current consumption by the buck/boost converters.
+    - The configuration of the [TPS6300x][16] converters on the FuelTank causes a relatively high current drain in low-power configurations. See [this article][15] for more information.
+  - Remove 1KΩ resistor R14 to disable the BAT LOW LED.
+    - The LED quickly drains whatever remaining power is available in the battery, often to the point that a special procedure needs to be performed to re-enable the battery for charging (see Section 6 in the Fuel Tank [User's Guide][21]).
+  - Further power reduction (on the order of 50 uA) is possible by disabling the 5V converter (TPS63002 chip labeled IC4). However, this is a more difficult modification, and also makes the FuelTank less useful without undoing the change (since 5V output is no longer available). To disable IC4, cut the trace going to pin 6 of IC4, and replace it with a wire soldered from pin 6 to GND.
 
-## Library Modifications
+## Implementation Details
 
-This uses an updated and modified version of the `LCD_SharpBoosterPack_SPI` library, rather than version 1.0.0 included with Energia.
-
-Copy version 1.0.3 from [GitHub][10] and make the following modifications to `LCD_SharpBoosterPack_SPI.cpp`:
-
-- To make the constructor definitions equivalent, update the second constructor definition (lines 106 - 108) by replacing this:
-
-    ```cpp
-    digitalWrite(RED_LED, HIGH);
-    lcd_vertical_max = model;
-    lcd_horizontal_max = model;
-    ```
-
-    with this:
-
-    ```cpp
-    lcd_vertical_max = model;
-    lcd_horizontal_max = model;
-    static uint8_t * _frameBuffer;
-    _frameBuffer = new uint8_t[_index(lcd_vertical_max, lcd_horizontal_max)];
-    DisplayBuffer = (uint8_t *) _frameBuffer;
-    ```
-
-## Program details
+### Data Collection
 
 The sketch collects the following data:
 
@@ -74,8 +56,9 @@ The sketch collects the following data:
   - StandbyTimeToEmpty value (minutes)
     - This is sent using the `Millis` field in the transmitted data structure
 
-After collecting the sensor data, the data is packaged and transmitted to a
-receiver hub which can then further process and store the data over time.
+After collecting the sensor data, the data is packaged and transmitted to a [receiver hub][5] which can then further process and store the data over time.
+
+### Temperature Calibrarion
 
 The calibration data programmed into both of my FR2433 chips improves the temperature readings, but still produces readings that are off by several degrees. I have added a `#define` to allow further refinement of the calibrated temperature readings:
 
@@ -87,9 +70,15 @@ This offset is added to the calibrated reading. Since the temperature values are
 
 When using this program, start with `TEMP_CALIBRATION_OFFSET` set to zero, and compare the readings with a known good thermometer. Then update the value as needed for the specific board/chip that you are using (if necessary).
 
+### Display Configuration
+
 There is a conflict with the LCD library's use of the `OneMsTaskTimer` and `sleep()`, such that `sleep()` does not work properly. This appears to be related to the software VCOM clock generation. The VCOM clock (as described in the LCD [application note][18]) is needed to prevent DC bias buildup in the display which can cause burn-in. However, this also significantly impacts power usage of the overall sketch. Therefore, the sketch disables the automatic screen refresh function by setting the autoVCOM parameter in the constructor to false. To limit burn-in, the sketch reverses the display every time it updates.
 
+### Power Usage
+
 With the microcontroller sleeping most of the time, overall power consumption is very low. Per [EnergyTrace][14] measurements, the module pulls a mean current draw of 0.027 mA. A fully charged FuelTank can power this setup for several months.
+
+### Program Space Savings
 
 In order to save program space, this sketch uses [software I2C][7] to get data from the [BQ27510 Fuel Gauge][12] on the Fuel Tank [BoosterPack][3] instead of the [Fuel Tank Library][13]. The BQ27510 has a simple I2C interface which makes it easy to implement directly without the use of a specialized library.
 
