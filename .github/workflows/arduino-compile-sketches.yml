@@ -31,8 +31,8 @@ jobs:
             - source-path: ./
             - source-url: https://github.com/Andy4495/MspTandV.git
             - source-url: https://github.com/Andy4495/SWI2C.git
-            - source-path: ./extras/OneMsTaskTimer
-            - source-path: ./extras/LCD_SharpBoosterPack_SPI
+            - source-url: https://github.com/Andy4495/OneMsTaskTimer.git
+            - source-url: https://github.com/Andy4495/LCD_SharpBoosterPack_SPI.git
       - name: Print the job summary
         if: ${{ inputs.message != null }}
         run: |

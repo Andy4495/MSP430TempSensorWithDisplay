@@ -1,6 +1,0 @@
-The files in this directory were copied without modification from the Energia GitHub repo, and are licensed according to the terms listed in the source files themselves.
-
-OneMsTaskTimer Library: https://github.com/energia/Energia/tree/master/libraries/OneMsTaskTimer
-  - GLPL: See source files for specific licensing details. 
-LCD_SharpBoosterPack_SPI: https://github.com/energia/Energia/tree/master/libraries/LCD_SharpBoosterPack_SPI
-  - CC BY-NC-SA: See source files for specific licensing details. 

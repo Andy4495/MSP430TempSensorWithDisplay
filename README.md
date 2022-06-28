@@ -111,12 +111,10 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
 
 ## External Libraries
 
-- [Calibrated Temperature and Vcc Library][6]
-- [Software I2C Library][7]
-- [OneMsTaskTimer Library][19]  
-  This library is part of the Energia IDE installation. However, it is not part of the board packages, and therefore is not included when compiling using the Arduino IDE or CLI. So I have also included a copy of the `.cpp` and `.h` files in the `extras/OneMsTaskTimer` folder in this repo.
-- [LCD_SharpBoosterPack_SPI Library][20]  
-  This library is part of the Energia IDE installation. However, it is not part of the board packages, and therefore is not included when compiling using the Arduino IDE or CLI. So I have also included a copy of the `.cpp` and `.h` files in the `extras/LCD_SharpBoosterPack_SPI` folder in this repo.  
+- [Calibrated Temperature and Vcc][6]
+- [Software I2C][7]
+- [OneMsTaskTimer][19]
+- [LCD_SharpBoosterPack_SPI][20]
 
 ## References
 
@@ -127,7 +125,6 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
 - [430BOOST-SHARP96][4] Display BoosterPack
   - Note that this BoosterPack has been discontinued. This sketch is specific to this BoosterPack and may require modifications to work with the [SHARP128][9] BoosterPack
 - [Wireless Sensor Receiver Hub][5]
-- Version 1.0.3 of [LCD_SharpBoosterPack_SPI library][10]
 - Sharp Memory LCD [datasheet][17]
 - Sharp Memory LCD [application note][18]
 
@@ -146,7 +143,6 @@ The files in the `extras` folder are provided for convenience when compiling wit
 [7]: https://github.com/Andy4495/SWI2C
 [8]: http://www.ti.com/tool/BOOSTXL-BATPAKMKII
 [9]: http://www.ti.com/tool/BOOSTXL-SHARP128
-[10]: https://github.com/energia/Energia/tree/master/libraries/LCD_SharpBoosterPack_SPI
 [11]: https://www.mouser.com/datasheet/2/365/LS013B4DN04(3V_FPC)-1202885.pdf
 [12]: https://www.ti.com/product/BQ27510
 [13]: https://forum.43oh.com/topic/4915-energia-library-fuel-tank-boosterpack/
@@ -155,8 +151,8 @@ The files in the `extras` folder are provided for convenience when compiling wit
 [16]: https://www.ti.com/lit/ds/symlink/tps63002.pdf
 [17]: https://www.mouser.com/catalog/specsheets/LS013B4DN04(3V_FPC).pdf
 [18]: https://www.sharpmemorylcd.com/resources/SharpMemoryLCDTechnologyB.pdf
-[19]: https://github.com/energia/Energia/tree/master/libraries/OneMsTaskTimer
-[20]: https://github.com/energia/Energia/tree/master/libraries/LCD_SharpBoosterPack_SPI
+[19]: https://github.com/Andy4495/OneMsTaskTimer
+[20]: https://github.com/Andy4495/LCD_SharpBoosterPack_SPI
 [21]: https://www.ti.com/lit/pdf/slvua32
 [100]: https://choosealicense.com/licenses/mit/
 [101]: ./LICENSE.txt
