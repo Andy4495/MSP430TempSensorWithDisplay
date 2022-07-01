@@ -58,7 +58,7 @@ The sketch collects the following data:
 
 After collecting the sensor data, the data is packaged and transmitted to a [receiver hub][5] which can then further process and store the data over time.
 
-### Temperature Calibrarion
+### Temperature Calibration
 
 The calibration data programmed into both of my FR2433 chips improves the temperature readings, but still produces readings that are off by several degrees. I have added a `#define` to allow further refinement of the calibrated temperature readings:
 
