@@ -28,6 +28,7 @@
     04/27/20 - A.T. - Use StandbyTimeToEmpty instead of TimeToEmpty (although the Fuel Gauge seems to
                       report an inaccurate value for standby time, too).
     09/12/21 - A.T. - Reverse the screen on each update to limit burn-in.
+    07/07/22 - A.T. - Remove snprintf() calls to save program space.
 
 
 */
@@ -88,7 +89,7 @@
 // This value will be added to the calibrated temperature.
 // Note that it is in tenth degrees, so to increase the calibrated temp reading by 2
 // degrees, then set the offset to 20.
-#define TEMP_CALIBRATION_OFFSET 70
+#define TEMP_CALIBRATION_OFFSET 0
 
 #ifdef FUEL_TANK_ENABLED
 #define SWI2C_ENABLED
@@ -99,7 +100,6 @@
 #define RADIO_ENABLED
 
 #include <SPI.h>
-#include <AIR430BoostFCC.h>
 #include "MspTandV.h"
 
 #include "OneMsTaskTimer.h"
@@ -109,6 +109,10 @@ static const uint8_t SHARP_DISP = 5;
 static const uint8_t SHARP_VCC  = 2;
 //LCD_SharpBoosterPack_SPI(uint8_t pinChipSelect, uint8_t pinDISP, uint8_t pinVCC, bool autoVCOM, uint8_t model)
 LCD_SharpBoosterPack_SPI myScreen(SHARP_CS, SHARP_DISP, SHARP_VCC, false, SHARP_96);
+
+#ifdef RADIO_ENABLED
+#include <AIR430BoostFCC.h>
+#endif
 
 int orientation = 1;
 
@@ -136,7 +140,7 @@ int orientation = 1;
 
 // CC110L Declarations
 #define ADDRESS_REMOTE  0x01  // Receiver hub address
-#define     TxRadioID     4   // Transmitter address
+#define     TxRadioID      4  // Transmitter address
 
 enum {WEATHER_STRUCT, TEMP_STRUCT};
 
@@ -174,13 +178,24 @@ MspVcc myVcc;
 SWI2C myFuelTank = SWI2C(SDA_PIN, SCL_PIN, FUEL_TANK_ADDR);
 #endif
 
-#define MAXTEXTSIZE 34
-char text[MAXTEXTSIZE];      // buffer to store text to print
-
 unsigned int loopCount = 0;
 const unsigned long sleepTime = 240;  // In seconds.
 
+#define SCREEN_LINE_LENGTH 16
+const char* text1a = "Sensor:         ";
+const char* text1b = "Channel:      1 ";
+char text1[SCREEN_LINE_LENGTH + 1];
+const char* text2a = "Vcc (mV):       ";
+char text2[SCREEN_LINE_LENGTH + 1];
+const char* text3 = "Temp";
+char text4[5];                 // Temperature value
+char text5[7];                 // Loop count
+
 void setup() {
+
+  for (int i = 0; i < SCREEN_LINE_LENGTH + 1; i++) text1[i] = text1a[i];
+  text1[14] = TxRadioID + '0';
+  for (int i = 0; i < SCREEN_LINE_LENGTH + 1; i++) text2[i] = text2a[i];
 
 #ifdef FUEL_TANK_ENABLED
   myFuelTank.begin();
@@ -199,12 +214,15 @@ void setup() {
 #endif
 }
 
-
 void loop() {
 
   loopCount++;
+  if (loopCount > 32767U) loopCount = 0;
 
   myTemp.read(CAL_ONLY);
+#ifndef FUEL_TANK_ENABLED
+  myVcc.read(CAL_ONLY);
+#endif
 
   txPacket.sensordata.MSP_T = myTemp.getTempCalibratedF() + TEMP_CALIBRATION_OFFSET;
 #ifdef FUEL_TANK_ENABLED
@@ -224,21 +242,36 @@ void loop() {
 
   myScreen.clear();
   myScreen.setFont(0);
-  snprintf(text, MAXTEXTSIZE, "Sensor:   %d     Channel:  %d", TxRadioID, 1);
-  myScreen.text(1, 1, text);
-  snprintf(text, MAXTEXTSIZE, "Vcc (mV): %d  Min Rmn:  %lu", txPacket.sensordata.Batt_mV, txPacket.sensordata.Millis);
-  myScreen.text(1, 19, text);
+  myScreen.text(1, 1, text1);    // Sensor
+  myScreen.text(1, 10,text1b);   // Channel
+
+  int tempmv;
+  text2[11] = txPacket.sensordata.Batt_mV / 1000 + '0';
+  tempmv = txPacket.sensordata.Batt_mV % 1000;
+  text2[12] = tempmv / 100  + '0';
+  tempmv = txPacket.sensordata.Batt_mV % 100;
+  text2[13] = tempmv / 10   + '0';
+  text2[14] = txPacket.sensordata.Batt_mV % 10 + '0';
+  myScreen.text(1, 19, text2);   // Vcc
+
   myScreen.setFont(1);
-  snprintf(text, MAXTEXTSIZE, "Temp");
-  myScreen.text(24, 44, text);
-  snprintf(text, MAXTEXTSIZE, "%d", (txPacket.sensordata.MSP_T + 5) / 10);
-  myScreen.text(36, 64, text);
+  myScreen.text(24, 35, text3);  // "Temp"
+
+  itoa((txPacket.sensordata.MSP_T + 5) / 10, text4, 10);
+  myScreen.text(36, 55, text4);  // Temperature degrees F
+
   myScreen.setFont(0);
-  snprintf(text, MAXTEXTSIZE, "%5u", loopCount);
-  myScreen.text(64, 85, text);
+  int loopxpos;
+  if (loopCount < 10) loopxpos = 85;
+  else if (loopCount < 100) loopxpos = 79;
+  else if (loopCount < 1000) loopxpos = 73;
+  else if (loopCount < 10000) loopxpos = 67; 
+  else loopxpos = 61;
+  itoa(loopCount, text5, 10);
+  myScreen.text(loopxpos, 85, text5); // Loops since last reboot, rollover at 32768
+
   if (loopCount % 2) myScreen.flush();
   else myScreen.flushReversed();
 
   sleepSeconds(sleepTime);
-
 }
