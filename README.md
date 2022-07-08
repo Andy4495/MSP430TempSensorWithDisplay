@@ -130,9 +130,7 @@ In order to save program space, this sketch uses [software I2C][7] to get data f
 
 ## License
 
-The software and other files in this repository (with the exception of the files in the `extras` folder) are released under what is commonly called the [MIT License][100]. See the file [`LICENSE.txt`][101] in this repository.
-
-The files in the `extras` folder are provided for convenience when compiling without the Energia IDE. They have their own licensing terms as noted in the comments in the files themselves.
+The software and other files in this repository are released under what is commonly called the [MIT License][100]. See the file [`LICENSE.txt`][101] in this repository.
 
 [1]: http://www.ti.com/tool/MSP-EXP430FR2433
 [2]: https://www.ti.com/lit/ml/swru312b/swru312b.pdf
