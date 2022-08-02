@@ -148,7 +148,7 @@ The software and other files in this repository are released under what is commo
 [15]: https://embeddedcomputing.weebly.com/fuel-tank-boosterpack.html
 [16]: https://www.ti.com/lit/ds/symlink/tps63002.pdf
 [17]: https://www.mouser.com/catalog/specsheets/LS013B4DN04(3V_FPC).pdf
-[18]: https://www.sharpmemorylcd.com/resources/SharpMemoryLCDTechnologyB.pdf
+[18]: http://kuzyatech.com/wp-content/uploads/2012/10/LS013B4DN04_Application_Info.pdf
 [19]: https://github.com/Andy4495/OneMsTaskTimer
 [20]: https://github.com/Andy4495/LCD_SharpBoosterPack_SPI
 [21]: https://www.ti.com/lit/pdf/slvua32
@@ -157,3 +157,4 @@ The software and other files in this repository are released under what is commo
 [200]: https://github.com/Andy4495/MSP430TempSensorWithDisplay
 
 [//]: # (Old TI product link that is no longer active: http://www.ti.com/tool/430BOOST-CC110L)
+[//]: # (Previous [18] URL: https://www.sharpmemorylcd.com/resources/SharpMemoryLCDTechnologyB.pdf )
