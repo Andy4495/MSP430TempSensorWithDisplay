@@ -141,7 +141,7 @@ The software and other files in this repository are released under what is commo
 [7]: https://github.com/Andy4495/SWI2C
 [8]: http://www.ti.com/tool/BOOSTXL-BATPAKMKII
 [9]: http://www.ti.com/tool/BOOSTXL-SHARP128
-[11]: https://www.mouser.com/datasheet/2/365/LS013B4DN04(3V_FPC)-1202885.pdf
+[//]: # ([11]: https://www.mouser.com/datasheet/2/365/LS013B4DN04%283V_FPC%29-1202885.pdf)
 [12]: https://www.ti.com/product/BQ27510
 [13]: https://forum.43oh.com/topic/4915-energia-library-fuel-tank-boosterpack/
 [14]: http://www.ti.com/tool/ENERGYTRACE
@@ -154,7 +154,7 @@ The software and other files in this repository are released under what is commo
 [21]: https://www.ti.com/lit/pdf/slvua32
 [100]: https://choosealicense.com/licenses/mit/
 [101]: ./LICENSE.txt
-[200]: https://github.com/Andy4495/MSP430TempSensorWithDisplay
+[//]: # ([200]: https://github.com/Andy4495/MSP430TempSensorWithDisplay)
 
 [//]: # (Old TI product link that is no longer active: http://www.ti.com/tool/430BOOST-CC110L)
 [//]: # (Previous [18] URL: https://www.sharpmemorylcd.com/resources/SharpMemoryLCDTechnologyB.pdf )
