@@ -89,7 +89,7 @@
 // This value will be added to the calibrated temperature.
 // Note that it is in tenth degrees, so to increase the calibrated temp reading by 2
 // degrees, then set the offset to 20.
-#define TEMP_CALIBRATION_OFFSET 115
+#define TEMP_CALIBRATION_OFFSET 101
 
 #ifdef FUEL_TANK_ENABLED
 #define SWI2C_ENABLED
