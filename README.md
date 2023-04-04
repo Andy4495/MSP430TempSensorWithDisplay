@@ -142,7 +142,8 @@ The software and other files in this repository are released under what is commo
 [8]: http://www.ti.com/tool/BOOSTXL-BATPAKMKII
 [9]: http://www.ti.com/tool/BOOSTXL-SHARP128
 [//]: # ([11]: https://www.mouser.com/datasheet/2/365/LS013B4DN04%283V_FPC%29-1202885.pdf)
-[12]: https://www.ti.com/product/BQ27510
+[//]: # ([12]: https://www.ti.com/product/BQ27510)
+[12]: https://www.ti.com/lit/ug/sluua97/sluua97.pdf
 [13]: https://forum.43oh.com/topic/4915-energia-library-fuel-tank-boosterpack/
 [14]: http://www.ti.com/tool/ENERGYTRACE
 [15]: https://embeddedcomputing.weebly.com/fuel-tank-boosterpack.html
