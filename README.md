@@ -134,7 +134,7 @@ The software and other files in this repository are released under what is commo
 
 [1]: http://www.ti.com/tool/MSP-EXP430FR2433
 [2]: https://www.ti.com/lit/ml/swru312b/swru312b.pdf
-[3]: http://www.ti.com/tool/BOOSTXL-BATTPACK
+[3]: https://www.ti.com/lit/ug/slvua32/slvua32.pdf
 [4]: https://www.mouser.com/datasheet/2/405/slau553-489640.pdf
 [5]: https://github.com/Andy4495/Wireless-Sensor-Receiver-Hub
 [6]: https://github.com/Andy4495/mspTandV
@@ -158,5 +158,6 @@ The software and other files in this repository are released under what is commo
 [//]: # ([200]: https://github.com/Andy4495/MSP430TempSensorWithDisplay)
 
 [//]: # (Old TI product link that is no longer active: http://www.ti.com/tool/430BOOST-CC110L)
+[//]: # ( Former reference [3]: https://www.ti.com/tool/BOOSTXL-BATTPACK )
 [//]: # (Previous [18] URL: https://www.sharpmemorylcd.com/resources/SharpMemoryLCDTechnologyB.pdf )
 [//]: # (Previous [4] URL: https://www.ti.com/lit/ug/slau553/slau553.pdf )
