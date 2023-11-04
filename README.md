@@ -78,9 +78,9 @@ There is a conflict with the LCD library's use of the `OneMsTaskTimer` and `slee
 
 With the microcontroller sleeping most of the time, overall power consumption is very low. Per [EnergyTrace][14] measurements, the module pulls a mean current draw of 0.027 mA. A fully charged FuelTank can power this setup for several months.
 
-### Program Space Savings
+### BQ27510 Interface
 
-In order to save program space, this sketch uses [software I2C][7] to get data from the [BQ27510 Fuel Gauge][12] on the Fuel Tank [BoosterPack][3] instead of the [Fuel Tank Library][13]. The BQ27510 has a simple I2C interface which makes it easy to implement directly without the use of a specialized library.
+This sketch uses [software I2C][7] to get data from the [BQ27510 Fuel Gauge][12] on the Fuel Tank [BoosterPack][3]. The BQ27510 has a simple I2C interface which makes it easy to implement directly without the use of a specialized library.
 
 ## LaunchPad and BoosterPack Pin usage
 
@@ -144,7 +144,7 @@ The software and other files in this repository are released under what is commo
 [//]: # ([11]: https://www.mouser.com/datasheet/2/365/LS013B4DN04%283V_FPC%29-1202885.pdf)
 [//]: # ([12]: https://www.ti.com/product/BQ27510)
 [12]: https://www.ti.com/lit/ug/sluua97/sluua97.pdf
-[13]: https://forum.43oh.com/topic/4915-energia-library-fuel-tank-boosterpack/
+[//]: # ([13]: https://forum.43oh.com/topic/4915-energia-library-fuel-tank-boosterpack/)
 [14]: http://www.ti.com/tool/ENERGYTRACE
 [15]: https://embeddedcomputing.weebly.com/fuel-tank-boosterpack.html
 [16]: https://www.ti.com/lit/ds/symlink/tps63002.pdf
