@@ -1,7 +1,7 @@
 # MSP430 Temperature Sensor with Display and Fuel Tank BoosterPack Support
 
 [![Arduino Compile Sketches](https://github.com/Andy4495/MSP430TempSensorWithDisplay/actions/workflows/arduino-compile-sketches.yml/badge.svg)](https://github.com/Andy4495/MSP430TempSensorWithDisplay/actions/workflows/arduino-compile-sketches.yml)
-[![Check Markdown Links](https://github.com/Andy4495/MSP430TempSensorWithDisplay/actions/workflows/CheckMarkdownLinks.yml/badge.svg)](https://github.com/Andy4495/MSP430TempSensorWithDisplay/actions/workflows/CheckMarkdownLinks.yml)
+[![Check Markdown Links](https://github.com/Andy4495/MSP430TempSensorWithDisplay/actions/workflows/check-links.yml/badge.svg)](https://github.com/Andy4495/MSP430TempSensorWithDisplay/actions/workflows/check-links.yml)
 
 Wireless temperature sensor which uses an [MSP-EXP430FR2433][1] LauchPad, [430BOOST-CC110L][2] wireless transceiver, [BOOSTXL-BATTPACK][3] LiPo power source, and [430BOOST-SHARP96][4] low-power display.
 
