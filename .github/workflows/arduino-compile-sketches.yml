@@ -16,6 +16,10 @@ jobs:
     strategy:
       matrix:
         include:
+          - arch: msp430-gcc9
+            fqbn: 'energia:msp430gcc9:MSP-EXP430G2553LP'
+            platform-name: 'energia:msp430gcc9'
+            platform-sourceurl: 'https://raw.githubusercontent.com/Andy4495/TI_Platform_Cores_For_Arduino/refs/heads/main/json/package_energia_minimal_msp430_index.json'
           - arch: msp430
             fqbn: 'energia:msp430:MSP-EXP430G2553LP'
             platform-name: 'energia:msp430'
