@@ -17,9 +17,9 @@ Because of some BoosterPack/LaunchPad pin incompatibilities and to decrease powe
   - Remove jumper J11 to disconnect LED2.
   - Remove all jumpers from J101 to disconnect the emulation section from the target section of the LaunchPad.
   
-  Note that you will need to connect the GND, SBWTDIO, and SBWTDCK jumpers to program the board.
+  Note that in order to program the board, you will need to connect the GND, SBWTDIO, and SBWTDCK jumpers.
   
-  **Do not supply USB power to the LaunchPad** when it is plugged into the FuelTank BoosterPack unless the 5V and 3V3 jumppers are removed.
+  **Do not supply USB power to the LaunchPad** when it is plugged into the FuelTank BoosterPack unless the 5V and 3V3 jumpers are removed.
 
 - [FuelTank][3] BoosterPack
 
@@ -33,8 +33,7 @@ Because of some BoosterPack/LaunchPad pin incompatibilities and to decrease powe
   - Remove resistors R11, R12, R13 from the [FuelTank][3] BoosterPack.
     - This ensures that the CHARGE, EN, and POWER_GOOD signals don't interfere with LCD control and SPI signals.
   - Remove 10KΩ resistors R18 and R20 and install pulldown 10KΩ or 22KΩ resistors in R17 and R19.
-    - This significantly reduces current consumption by the buck/boost converters.
-    - The configuration of the [TPS6300x][16] converters on the FuelTank causes a relatively high current drain in low-power configurations. See [this article][15] for more information.
+    - This significantly reduces idle current consumption by the [TPS6300x][16] buck/boost converters by enabling the on-chip power-save mode. See [this article][15] for more information.
   - Remove 1KΩ resistor R14 to disable the BAT LOW LED.
     - The LED quickly drains whatever remaining power is available in the battery, often to the point that a special procedure needs to be performed to re-enable the battery for charging (see Section 6 in the Fuel Tank [User's Guide][21]).
   - Further power reduction (on the order of 50 uA) is possible by disabling the 5V converter (TPS63002 chip labeled IC4). However, this is a more difficult modification, and also makes the FuelTank less useful without undoing the change (since 5V output is no longer available). To disable IC4, cut the trace going to pin 6 of IC4, and replace it with a wire soldered from pin 6 to GND.
@@ -72,7 +71,7 @@ When using this program, start with `TEMP_CALIBRATION_OFFSET` set to zero, and c
 
 ### Display Configuration
 
-There is a conflict with the LCD library's use of the `OneMsTaskTimer` and `sleep()`, such that `sleep()` does not work properly. This appears to be related to the software VCOM clock generation. The VCOM clock (as described in the LCD [application note][18]) is needed to prevent DC bias buildup in the display which can cause burn-in. However, this also significantly impacts power usage of the overall sketch. Therefore, the sketch disables the automatic screen refresh function by setting the autoVCOM parameter in the constructor to false. To limit burn-in, the sketch reverses the display every time it updates.
+There is a conflict with the LCD library's use of the `OneMsTaskTimer` and `sleep()`, such that `sleep()` does not work properly. This appears to be related to the software VCOM clock generation. The VCOM clock (as described in the LCD [application note][18]) is needed to prevent DC bias buildup in the display which can cause burn-in. However, this also significantly impacts power usage of the overall sketch. Therefore, the sketch disables the software VCOM inversion function by setting the `autoVCOM` parameter in the constructor to `false`. To limit burn-in, the sketch reverses the display every time it updates.
 
 ### Power Usage
 
