@@ -50,7 +50,9 @@
 
 /*
     External libraries:
-    - SWI2C Library by A.T.
+    - https://github.com/Andy4495/MspTandV
+    - https://github.com/Andy4495/OneMsTaskTimer
+    - https://github.com/Andy4495/LCD_SharpBoosterPack_SPI
 */
 
 /* Pin Definitions -- Stacking Fuel Tank I, CC110L, and SHARP96
@@ -100,10 +102,10 @@
 #define RADIO_ENABLED
 
 #include <SPI.h>
-#include "MspTandV.h"
+#include "MspTandV.h"                 // https://github.com/Andy4495/MspTandV
 
-#include "OneMsTaskTimer.h"
-#include "LCD_SharpBoosterPack_SPI.h"
+#include "OneMsTaskTimer.h"           // https://github.com/Andy4495/OneMsTaskTimer
+#include "LCD_SharpBoosterPack_SPI.h" // https://github.com/Andy4495/LCD_SharpBoosterPack_SPI
 static const uint8_t SHARP_CS   = 6;
 static const uint8_t SHARP_DISP = 5;
 static const uint8_t SHARP_VCC  = 2;
